@@ -1,0 +1,96 @@
+// Student Result System - Simple OOP version (C++)
+// Concepts: Encapsulation, Inheritance, Polymorphism, Abstraction
+
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+// ---------- Abstract base class ----------
+class Student {
+protected:
+    string name;
+    int marks[3]; // 3 subjects
+
+public:
+    Student(string n, int m1, int m2, int m3) {
+        name = n;
+        marks[0] = m1; marks[1] = m2; marks[2] = m3;
+    }
+
+    int getTotal() { return marks[0] + marks[1] + marks[2]; }
+    float getPercentage() { return getTotal() / 3.0; }
+
+    virtual string getGrade() = 0;   // pure virtual -> abstraction
+
+    virtual void show() {            // virtual -> polymorphism
+        cout << name << "\tTotal: " << getTotal()
+             << "\tPercentage: " << getPercentage()
+             << "\tGrade: " << getGrade() << endl;
+    }
+
+    virtual ~Student() {}
+};
+
+// ---------- Derived classes ----------
+class UGStudent : public Student {
+public:
+    UGStudent(string n, int m1, int m2, int m3) : Student(n, m1, m2, m3) {}
+
+    string getGrade() override {
+        float p = getPercentage();
+        if (p >= 75) return "A";
+        if (p >= 60) return "B";
+        if (p >= 40) return "C";
+        return "Fail";
+    }
+};
+
+class PGStudent : public Student {
+public:
+    PGStudent(string n, int m1, int m2, int m3) : Student(n, m1, m2, m3) {}
+
+    string getGrade() override {
+        float p = getPercentage();
+        if (p >= 80) return "A";
+        if (p >= 65) return "B";
+        if (p >= 50) return "C";
+        return "Fail";
+    }
+};
+
+// ---------- Main program ----------
+int main() {
+    vector<Student*> students;
+    int n;
+
+    cout << "How many students? ";
+    cin >> n;
+
+    for (int i = 0; i < n; i++) {
+        string name;
+        int m1, m2, m3, type;
+
+        cout << "\nStudent " << i + 1 << " name: ";
+        cin >> name;
+        cout << "Marks (3 subjects): ";
+        cin >> m1 >> m2 >> m3;
+        cout << "Type (1-UG, 2-PG): ";
+        cin >> type;
+
+        if (type == 2)
+            students.push_back(new PGStudent(name, m1, m2, m3));
+        else
+            students.push_back(new UGStudent(name, m1, m2, m3));
+    }
+
+    cout << "\n----- RESULTS -----\n";
+    for (auto s : students)
+        s->show();          // polymorphic call
+
+    for (auto s : students)
+        delete s;            // cleanup
+
+    return 0;
+}
+Explain code
